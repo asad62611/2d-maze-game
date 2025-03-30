@@ -204,18 +204,42 @@ export const Maze = () => {
       <div className="absolute top-5 left-0 right-0 flex justify-center items-center z-10">
         {/* Wyświetlanie timera */}
         <div className="text-4xl font-semibold">
-          {countdown > 0
-            ? `Zaczynamy za ${countdown}...`
-            : `Czas: ${elapsedTime.toFixed(3)}s`}
-        </div>
+  {countdown > 0
+    ? `Zaczynamy za ${countdown}...`
+    : `Czas gry: ${Math.floor(elapsedTime / 60)
+        .toString()
+        .padStart(2, "0")}:${Math.floor(elapsedTime % 60)
+        .toString()
+        .padStart(2, "0")}.${Math.floor((elapsedTime % 1) * 1000)
+        .toString()
+        .padStart(3, "0")}`}
+</div>
       </div>
 
       <canvas ref={canvasRef} className="border border-gray-400" />
       <div className="absolute top-32 right-10">
         {/* Wyświetlanie czasów graczy */}
         <div>
-          <h3>Blue: {players[0].gameOver ? players[0].time.toFixed(3) : "-"}</h3>
-          <h3>Red: {players[1].gameOver ? players[1].time.toFixed(3) : "-"}</h3>
+        <h3>Blue: {players[0].gameOver
+  ? `${Math.floor(players[0].time / 60)
+      .toString()
+      .padStart(2, "0")}:${Math.floor(players[0].time % 60)
+      .toString()
+      .padStart(2, "0")}.${Math.floor((players[0].time % 1) * 1000)
+      .toString()
+      .padStart(3, "0")}`
+  : "-"}</h3>
+
+<h3>Red: {players[1].gameOver
+  ? `${Math.floor(players[1].time / 60) // <-- poprawione
+      .toString()
+      .padStart(2, "0")}:${Math.floor(players[1].time % 60)
+      .toString()
+      .padStart(2, "0")}.${Math.floor((players[1].time % 1) * 1000)
+      .toString()
+      .padStart(3, "0")}`
+  : "-"}</h3>
+
         </div>
       </div>
     </div>
