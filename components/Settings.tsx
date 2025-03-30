@@ -9,26 +9,30 @@ import {
   SheetTrigger
 } from "@/components/ui/sheet";
 import { SettingsIcon } from "lucide-react";
+import { Button } from "./ui/button";
 
 export function Settings() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="absolute top-4 right-4 z-50 flex items-center gap-2 px-4 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-md transition duration-300">
+        <Button
+          variant="outline"
+          className="fixed right-4 top-4 z-10 font-medium cursor-pointer"
+        >
           <SettingsIcon className="size-4.5" />
           Settings
-        </button>
+        </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="bg-foreground/95 text-white border-black">
         <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
+          <SheetTitle className="text-white">Settings</SheetTitle>
           <SheetDescription>Adjust your game settings here.</SheetDescription>
         </SheetHeader>
         <SheetFooter>
           <SheetClose asChild>
-            <button className="flex justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition duration-300">
+            <Button variant="outline" className="text-black cursor-pointer">
               Save changes
-            </button>
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

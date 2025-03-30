@@ -12,7 +12,7 @@ const generateMaze = (rows, cols) => {
     [0, -2],
     [0, 2],
     [-2, 0],
-    [2, 0],
+    [2, 0]
   ];
 
   const isValid = (x, y) => x > 0 && x < rows - 1 && y > 0 && y < cols - 1;
@@ -80,10 +80,10 @@ export const Maze = () => {
   const { maze, exitX, exitY, finishX, finishY } = mazeData;
 
   const [players, setPlayers] = useState([
-    { id: 'blue', x: exitX, y: exitY + 1, time: 0, gameOver: false },
-    { id: 'red', x: exitX - 1, y: exitY + 1, time: 0, gameOver: false },
+    { id: "blue", x: exitX, y: exitY + 1, time: 0, gameOver: false },
+    { id: "red", x: exitX - 1, y: exitY + 1, time: 0, gameOver: false }
   ]);
-  
+
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
@@ -94,7 +94,7 @@ export const Maze = () => {
   useEffect(() => {
     if (countdown > 0) {
       const countdownInterval = setInterval(() => {
-        setCountdown((prev) => prev - 1);
+        setCountdown(prev => prev - 1);
       }, 1000);
       return () => clearInterval(countdownInterval);
     } else {
@@ -113,8 +113,8 @@ export const Maze = () => {
       const currentTime = performance.now();
       const timeElapsed = (currentTime - startTime) / 1000; // Przekształcenie na sekundy
       setElapsedTime(timeElapsed);
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) =>
+      setPlayers(prevPlayers =>
+        prevPlayers.map(player =>
           player.gameOver ? player : { ...player, time: timeElapsed }
         )
       );
@@ -124,22 +124,22 @@ export const Maze = () => {
   }, [startTime, players]);
 
   // Obsługa ruchu
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (!gameStarted) return; // Zapobiegaj ruchowi przed rozpoczęciem gry
 
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player) => {
+    setPlayers(prevPlayers =>
+      prevPlayers.map(player => {
         let { x, y } = player;
 
         //if (player.gameOver) return player; // Zatrzymaj gracza, jeśli gra się skończyła
 
-        if (player.id === 'blue') {
+        if (player.id === "blue") {
           // Ruch gracza 1 (niebieski) za pomocą strzałek
           if (e.key === "ArrowUp" && maze[x - 1]?.[y] !== 1) x--;
           if (e.key === "ArrowDown" && maze[x + 1]?.[y] !== 1) x++;
           if (e.key === "ArrowLeft" && maze[x]?.[y - 1] !== 1) y--;
           if (e.key === "ArrowRight" && maze[x]?.[y + 1] !== 1) y++;
-        } else if (player.id === 'red') {
+        } else if (player.id === "red") {
           // Ruch gracza 2 (czerwony) za pomocą klawiszy WSAD
           if (e.key === "w" && maze[x - 1]?.[y] !== 1) x--;
           if (e.key === "s" && maze[x + 1]?.[y] !== 1) x++;
@@ -179,16 +179,12 @@ export const Maze = () => {
       for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
           ctx.fillStyle =
-            maze[i][j] === 1
-              ? "black"
-              : maze[i][j] === 2
-              ? "green"
-              : "white";
+            maze[i][j] === 1 ? "black" : maze[i][j] === 2 ? "green" : "white";
           ctx.fillRect(j * size, i * size, size, size);
         }
       }
-      
-      players.forEach((player) => {
+
+      players.forEach(player => {
         ctx.fillStyle = player.id === "blue" ? "blue" : "red";
         ctx.fillRect(player.y * size, player.x * size, size, size);
       });
@@ -200,46 +196,51 @@ export const Maze = () => {
   }, [players]);
 
   return (
-    <div className="relative flex justify-center items-center border border-gray-500 overflow-hidden h-screen w-screen">
-      <div className="absolute top-5 left-0 right-0 flex justify-center items-center z-10">
+    <div className="relative flex justify-center items-center overflow-hidden w-dvw h-dvh text-white">
+      <div className="absolute top-16 left-0 right-0 flex justify-center items-center">
         {/* Wyświetlanie timera */}
-        <div className="text-4xl font-semibold">
-  {countdown > 0
-    ? `Zaczynamy za ${countdown}...`
-    : `Czas gry: ${Math.floor(elapsedTime / 60)
-        .toString()
-        .padStart(2, "0")}:${Math.floor(elapsedTime % 60)
-        .toString()
-        .padStart(2, "0")}.${Math.floor((elapsedTime % 1) * 1000)
-        .toString()
-        .padStart(3, "0")}`}
-</div>
+        <div className="text-3xl font-semibold tabular-nums text-center">
+          {countdown > 0
+            ? `Zaczynamy za ${countdown}...`
+            : `Czas gry: ${Math.floor(elapsedTime / 60)
+                .toString()
+                .padStart(2, "0")}:${Math.floor(elapsedTime % 60)
+                .toString()
+                .padStart(2, "0")}.${Math.floor((elapsedTime % 1) * 1000)
+                .toString()
+                .padStart(3, "0")}`}
+        </div>
       </div>
 
-      <canvas ref={canvasRef} className="border border-gray-400" />
+      <canvas ref={canvasRef} className="bg-white rounded-lg" />
       <div className="absolute top-32 right-10">
         {/* Wyświetlanie czasów graczy */}
         <div>
-        <h3>Blue: {players[0].gameOver
-  ? `${Math.floor(players[0].time / 60)
-      .toString()
-      .padStart(2, "0")}:${Math.floor(players[0].time % 60)
-      .toString()
-      .padStart(2, "0")}.${Math.floor((players[0].time % 1) * 1000)
-      .toString()
-      .padStart(3, "0")}`
-  : "-"}</h3>
+          <h3>
+            Blue:{" "}
+            {players[0].gameOver
+              ? `${Math.floor(players[0].time / 60)
+                  .toString()
+                  .padStart(2, "0")}:${Math.floor(players[0].time % 60)
+                  .toString()
+                  .padStart(2, "0")}.${Math.floor((players[0].time % 1) * 1000)
+                  .toString()
+                  .padStart(3, "0")}`
+              : "-"}
+          </h3>
 
-<h3>Red: {players[1].gameOver
-  ? `${Math.floor(players[1].time / 60) // <-- poprawione
-      .toString()
-      .padStart(2, "0")}:${Math.floor(players[1].time % 60)
-      .toString()
-      .padStart(2, "0")}.${Math.floor((players[1].time % 1) * 1000)
-      .toString()
-      .padStart(3, "0")}`
-  : "-"}</h3>
-
+          <h3>
+            Red:{" "}
+            {players[1].gameOver
+              ? `${Math.floor(players[1].time / 60) // <-- poprawione
+                  .toString()
+                  .padStart(2, "0")}:${Math.floor(players[1].time % 60)
+                  .toString()
+                  .padStart(2, "0")}.${Math.floor((players[1].time % 1) * 1000)
+                  .toString()
+                  .padStart(3, "0")}`
+              : "-"}
+          </h3>
         </div>
       </div>
     </div>

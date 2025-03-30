@@ -1,3 +1,4 @@
+import { Background } from "@/components/Background";
 import { Settings } from "@/components/Settings";
 import { Metadata } from "next";
 import "./globals.css";
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Background />
         <Settings />
         {children}
       </body>
