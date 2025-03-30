@@ -200,7 +200,7 @@ export const Maze = () => {
   }, [players]);
 
   return (
-    <div className="relative flex justify-center items-center bg-white border border-gray-500 overflow-hidden h-screen w-screen">
+    <div className="relative flex justify-center items-center border border-gray-500 overflow-hidden h-screen w-screen">
       <div className="absolute top-5 left-0 right-0 flex justify-center items-center z-10">
         {/* Wyświetlanie timera */}
         <div className="text-4xl font-semibold">

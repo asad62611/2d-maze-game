@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -18,12 +19,12 @@ export default function Home() {
             placeholder="Enter your name"
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500"
           />
-          <button
-            type="submit"
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-md transition duration-300"
+          <Link
+            href="/maze" 
+            className="flex justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-md transition duration-300"
           >
             Play
-          </button>
+          </Link>
           <button
             type="button"
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-md transition duration-300"
