@@ -26,7 +26,9 @@ export function Settings() {
       <SheetContent className="bg-foreground/95 text-white border-black">
         <SheetHeader>
           <SheetTitle className="text-white">Settings</SheetTitle>
-          <SheetDescription>Adjust your game settings here.</SheetDescription>
+          <SheetDescription className="text-white/80">
+            Adjust your game settings here.
+          </SheetDescription>
         </SheetHeader>
         <SheetFooter>
           <SheetClose asChild>
