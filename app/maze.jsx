@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const generateMaze = (rows, cols, difficultyLevel = "easy") => {
+const generateMaze = (rows, cols, difficultyLevel) => {
   const maze = Array(rows)
     .fill()
     .map(() => Array(cols).fill(1));
@@ -74,22 +74,13 @@ const generateMaze = (rows, cols, difficultyLevel = "easy") => {
   maze[centerRow][centerCol + 2] = 0;
   maze[centerRow][centerCol + 3] = 0;
 
-  const numberOfExits =
-    difficultyLevel === "easy"
-      ? 1
-      : difficultyLevel === "medium"
-      ? 2
-      : difficultyLevel === "hard"
-      ? 3
-      : 1;
-
   const exits = [];
   const potentialExitSides = ["top", "bottom", "left", "right"];
   const usedSides = new Set();
   let finishX = 0,
     finishY = 0;
 
-  while (exits.length < numberOfExits && usedSides.size < 4) {
+  while (exits.length < 1 && usedSides.size < 4) {
     const side =
       potentialExitSides[Math.floor(Math.random() * potentialExitSides.length)];
     if (usedSides.has(side)) continue;
@@ -157,32 +148,31 @@ const generateMaze = (rows, cols, difficultyLevel = "easy") => {
 //zmiana poziomu trudnosci przez wielkosc labiryntu
 //to do: connect with button to switching a difficulty
 
-
-const getMazeSize = (difficulty) => {
+const getMazeSize = difficulty => {
   switch (difficulty) {
     case "easy":
       return { rows: 31, cols: 31 };
     case "medium":
-      return { rows: 61, cols: 61 };
+      return { rows: 45, cols: 45 };
     case "hard":
-      return { rows: 91, cols: 91 };
+      return { rows: 61, cols: 61 };
+    case "extreme":
+      return { rows: 81, cols: 81 };
     default:
       return { rows: 31, cols: 31 };
   }
 };
 
-
-export const Maze = () => {
+export const Maze = ({ difficulty }) => {
   const canvasRef = useRef(null);
-  const [difficulty, setDifficulty] = useState("easy");
-  
+
   const { rows, cols } = getMazeSize(difficulty);
   const size = Math.max(10, Math.min(40, 600 / Math.max(rows, cols)));
-   
+
   const [mazeData, setMazeData] = useState(() =>
     generateMaze(rows, cols, difficulty)
   );
-  const { maze, finishX, finishY, startX, startY } = mazeData;  
+  const { maze, finishX, finishY, startX, startY } = mazeData;
 
   const [players, setPlayers] = useState([
     {

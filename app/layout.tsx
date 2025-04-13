@@ -2,6 +2,7 @@ import { Background } from "@/components/Background";
 import { Instruction } from "@/components/Instruction";
 import { Settings } from "@/components/Settings";
 import { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({
         <Background />
         <Instruction />
         <Settings />
-        {children}
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </body>
     </html>
   );
