@@ -1,4 +1,5 @@
 import { Background } from "@/components/Background";
+import { Instruction } from "@/components/Instruction";
 import { Settings } from "@/components/Settings";
 import { Metadata } from "next";
 import "./globals.css";
@@ -17,6 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Background />
+        <Instruction />
         <Settings />
         {children}
       </body>
