@@ -1,13 +1,24 @@
 "use client";
 
 import Head from "next/head";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
+  const router = useRouter();
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">(
     "easy"
   );
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const params = new URLSearchParams({
+      difficulty
+    });
+
+    router.push(`/maze?${params.toString()}`);
+  };
 
   return (
     <>
@@ -18,7 +29,7 @@ export default function Home() {
         </Head>
         <div className="bg-white p-10 rounded-lg max-w-md w-full flex flex-col gap-y-8 z-10">
           <h1 className="text-5xl font-bold text-center">2D Maze Game</h1>
-          <form className="flex flex-col">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
             <div className="flex items-center gap-x-4">
               <input
                 type="text"
@@ -37,20 +48,20 @@ export default function Home() {
                 <option value="hard">Hard</option>
               </select>
             </div>
-          </form>
-          <div className="flex flex-col gap-y-3">
-            <Link
-              href="/maze"
-              className="flex justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition duration-300"
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition duration-300"
             >
               Play
-            </Link>
-            <Link
+            </button>
+          </form>
+          <div>
+            <a
               href="/maze"
-              className="flex justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition duration-300"
+              className="block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition duration-300"
             >
               Create Private Room
-            </Link>
+            </a>
           </div>
         </div>
       </div>
