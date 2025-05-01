@@ -12,8 +12,7 @@ const useSocket = () => {
   }
   return socketRef.current;
 };
-
-export const Maze = () => {
+export const Maze = ({ difficulty = "easy" }) => {
   const socket = useSocket();
   const router = useRouter();
   const canvasRef = useRef(null);
