@@ -4,8 +4,8 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 const { generateMaze } = require("./mazeUtils");
 
-const app = express(); // ✅ najpierw tworzymy app
-const server = http.createServer(app); // ✅ potem server na bazie app
+const app = express();
+const server = http.createServer(app);
 
 const allowedOrigins = [
   "https://twod-maze-frontend.onrender.com",
