@@ -56,3 +56,41 @@ export const ReturnButton = ({ socket }) => {
     </AlertDialog>
   );
 };
+
+export const ReturnButtonSP = () => {
+  const router = useRouter();
+
+  const handleLeave = () => {
+    router.push("/");
+  };
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="destructive"
+          className="absolute left-4 top-4 z-10 font-medium cursor-pointer"
+        >
+          <DoorOpenIcon className="size-4.5" />
+          Leave
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Leave the game?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You will have to start over if you return. Do you want to continue?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction asChild>
+            <button onClick={handleLeave} className="text-red-600 font-medium">
+              Continue
+            </button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
