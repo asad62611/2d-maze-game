@@ -3,11 +3,6 @@
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-"use client";
-
-import Head from "next/head";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
