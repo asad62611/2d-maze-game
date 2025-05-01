@@ -1,6 +1,6 @@
 "use client";
 
-import { ReturnButton } from "@/components/ReturnButton";
+import { ReturnButtonSP } from "@/components/ReturnButton";
 import { useSearchParams } from "next/navigation";
 import Mazesp from "./mazesp";
 
@@ -12,7 +12,7 @@ export default function Mazesppage() {
 
   return (
     <main>
-      <ReturnButton/>
+      <ReturnButtonSP/>
       <Mazesp difficulty={difficulty ?? "easy"} />
     </main>
   );
