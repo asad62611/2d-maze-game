@@ -8,7 +8,7 @@ import { ReturnButton } from "@/components/ReturnButton";
 const useSocket = () => {
   const socketRef = useRef(null);
   if (!socketRef.current) {
-    socketRef.current = io(`http://${window.location.hostname}:3001`);
+    socketRef.current = io(`https://twod-maze-game.onrender.com:3001`);
   }
   return socketRef.current;
 };
