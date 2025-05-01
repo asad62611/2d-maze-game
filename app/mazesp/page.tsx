@@ -12,7 +12,7 @@ export default function Mazesppage() {
 
   return (
     <main>
-      <ReturnButton socket={socketRef.current} />
+      <ReturnButton/>
       <Mazesp difficulty={difficulty ?? "easy"} />
     </main>
   );
