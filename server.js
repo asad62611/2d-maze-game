@@ -10,7 +10,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-  origin: "https://twod-maze-game.onrender.com",
+  origin: "https://twod-maze-frontend.onrender.com",
   methods: ["GET", "POST"]
 },
 });
