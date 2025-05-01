@@ -2,11 +2,10 @@
 
 import { ReturnButton } from "@/components/ReturnButton";
 import { useSearchParams } from "next/navigation";
-import { Maze } from "./maze";
+import Mazesp from "./mazesp";
 
-
-export default function Mazepage() {
-  const searchParams = useSearchParams(); 
+export default function Mazesppage() {
+  const searchParams = useSearchParams();
   const difficulty = searchParams.get("difficulty");
 
   console.log(difficulty);
@@ -14,7 +13,7 @@ export default function Mazepage() {
   return (
     <main>
       <ReturnButton />
-      <Maze difficulty={difficulty ?? "easy"} />
+      <Mazesp difficulty={difficulty ?? "easy"} />
     </main>
   );
 }

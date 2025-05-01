@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,9 +13,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { DoorOpenIcon } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export const ReturnButton = () => {
+export const ReturnButton = ({ socket }) => {
+  const router = useRouter();
+
+  const handleLeave = () => {
+    if (socket) {
+      socket.emit("leaveRoom");
+      socket.disconnect();
+    }
+    router.push("/");
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -35,7 +47,9 @@ export const ReturnButton = () => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Link href="/">Continue</Link>
+            <button onClick={handleLeave} className="text-red-600 font-medium">
+              Continue
+            </button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
