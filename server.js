@@ -5,7 +5,11 @@ const { Server } = require("socket.io");
 const { generateMaze } = require("./mazeUtils");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://twod-maze-frontend.onrender.com",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 
 const server = http.createServer(app);
 const io = new Server(server, {
