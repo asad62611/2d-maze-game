@@ -4,20 +4,39 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 const { generateMaze } = require("./mazeUtils");
 
-const app = express();
+const allowedOrigins = [
+  "https://twod-maze-frontend.onrender.com",
+  "http://localhost:3000",
+  "https://2d-maze-game-git-fork-asad62611-render-despareks-projects.vercel.app/",
+  "https://2d-maze-game.vercel.app/"
+];
+
 app.use(cors({
-  origin: "https://twod-maze-frontend.onrender.com",
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST"],
   credentials: true
 }));
 
-const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-  origin: "https://twod-maze-frontend.onrender.com",
-  methods: ["GET", "POST"]
-},
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true
+  }
 });
+
 
 const COLORS = [
   "#3498db",
