@@ -9,13 +9,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { DoorOpenIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Socket } from "socket.io-client";
 
-export const ReturnButton = ({ socket }) => {
+type ReturnButtonProps = {
+  socket?: Socket;
+};
+
+export const ReturnButton = ({ socket }: ReturnButtonProps) => {
   const router = useRouter();
 
   const handleLeave = () => {
