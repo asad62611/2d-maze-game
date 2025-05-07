@@ -9,14 +9,13 @@ export default function Home() {
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">(
     "easy"
   );
+  const [name, setName] = useState("");
+  const [roomId, setRoomId] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const params = new URLSearchParams({
-      difficulty
-    });
-
+    const room = roomId.trim() || crypto.randomUUID().slice(0, 8);
+    const params = new URLSearchParams({ name, room, difficulty });
     router.push(`/maze?${params.toString()}`);
   };
 
@@ -29,16 +28,19 @@ export default function Home() {
         </Head>
         <div className="bg-white p-10 rounded-lg max-w-md w-full flex flex-col gap-y-8 z-10">
           <h1 className="text-5xl font-bold text-center">2D Maze Game</h1>
+
           <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
             <div className="flex items-center gap-x-4">
               <input
                 type="text"
-                placeholder="Enter your name"
+                placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
               <select
                 value={difficulty}
-                onChange={e =>
+                onChange={(e) =>
                   setDifficulty(e.target.value as "easy" | "medium" | "hard")
                 }
                 className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black bg-white"
@@ -48,6 +50,14 @@ export default function Home() {
                 <option value="hard">Hard</option>
               </select>
             </div>
+            <input
+              type="text"
+              placeholder="Enter Room ID (optional)"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black"
+            />
+
             <button
               type="submit"
               className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition duration-300"
@@ -55,14 +65,13 @@ export default function Home() {
               Play
             </button>
           </form>
-          <div>
-            <a
-              href="/maze"
-              className="block text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition duration-300"
-            >
-              Create Private Room
-            </a>
-          </div>
+
+          <button
+            onClick={() => router.push(`/mazesp?difficulty=${difficulty}`)}
+            className="mt-2 bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 rounded-md transition duration-300"
+          >
+            Singleplayer
+          </button>
         </div>
       </div>
     </>
