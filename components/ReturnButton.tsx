@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { DoorOpenIcon } from "lucide-react";
@@ -52,9 +52,9 @@ export const ReturnButton = ({ socket }: ReturnButtonProps) => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <button onClick={handleLeave} className="text-red-600 font-medium">
+            <Button onClick={handleLeave} className="font-medium">
               Continue
-            </button>
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -90,9 +90,9 @@ export const ReturnButtonSP = () => {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <button onClick={handleLeave} className="text-red-600 font-medium">
+            <Button onClick={handleLeave} className="font-medium">
               Continue
-            </button>
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

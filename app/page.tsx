@@ -35,12 +35,12 @@ export default function Home() {
                 type="text"
                 placeholder="Your name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black"
               />
               <select
                 value={difficulty}
-                onChange={(e) =>
+                onChange={e =>
                   setDifficulty(e.target.value as "easy" | "medium" | "hard")
                 }
                 className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black bg-white"
@@ -54,7 +54,7 @@ export default function Home() {
               type="text"
               placeholder="Enter Room ID (optional)"
               value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
+              onChange={e => setRoomId(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-black"
             />
 
@@ -65,13 +65,6 @@ export default function Home() {
               Play
             </button>
           </form>
-
-          <button
-            onClick={() => router.push(`/mazesp?difficulty=${difficulty}`)}
-            className="mt-2 bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 rounded-md transition duration-300"
-          >
-            Singleplayer
-          </button>
         </div>
       </div>
     </>
