@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { useRouter } from "next/navigation";
 import { ReturnButton } from "@/components/ReturnButton";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
 
 const useSocket = () => {
   const socketRef = useRef(null);
@@ -12,16 +12,13 @@ const useSocket = () => {
   }
   return socketRef.current;
 };
-export const Maze = ({ difficulty = "easy" }) => {
+
+export const Maze = () => {
   const socket = useSocket();
   const router = useRouter();
   const canvasRef = useRef(null);
-  const wallImgRef = useRef(null);
-  const groundImgRef = useRef(null);
-  const finishImgRef = useRef(null);
   const elapsedTimeRef = useRef(0);
 
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [mazeData, setMazeData] = useState(null);
   const [players, setPlayers] = useState({});
   const [myId, setMyId] = useState(null);
@@ -53,15 +50,15 @@ export const Maze = ({ difficulty = "easy" }) => {
     );
 
     socket.on("newPlayer", ({ id, pos }) => {
-      setPlayers((prev) => ({ ...prev, [id]: pos }));
+      setPlayers(prev => ({ ...prev, [id]: pos }));
     });
 
     socket.on("update", ({ id, pos }) => {
-      setPlayers((prev) => ({ ...prev, [id]: pos }));
+      setPlayers(prev => ({ ...prev, [id]: pos }));
     });
 
-    socket.on("removePlayer", (id) => {
-      setPlayers((prev) => {
+    socket.on("removePlayer", id => {
+      setPlayers(prev => {
         const copy = { ...prev };
         delete copy[id];
         return copy;
@@ -112,7 +109,7 @@ export const Maze = ({ difficulty = "easy" }) => {
     if (Object.values(players).length === 0) return;
 
     const allFinished = Object.values(players).every(
-      (player) => player.finishTime != null
+      player => player.finishTime != null
     );
 
     if (allFinished) {
@@ -125,32 +122,7 @@ export const Maze = ({ difficulty = "easy" }) => {
     }
   }, [players, gameStarted, startTime]);
 
-  useEffect(() => {
-    if (!mazeData) return;
-
-    const wallImg = new Image();
-    const groundImg = new Image();
-    const finishImg = new Image();
-
-    wallImg.src = "/wall.webp";
-    groundImg.src = "/ground.avif";
-    finishImg.src = "/finish.webp";
-
-    let loaded = 0;
-    const check = () => {
-      if (++loaded === 3) setImagesLoaded(true);
-    };
-
-    wallImg.onload = check;
-    groundImg.onload = check;
-    finishImg.onload = check;
-
-    wallImgRef.current = wallImg;
-    groundImgRef.current = groundImg;
-    finishImgRef.current = finishImg;
-  }, [mazeData]);
-
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (!mazeData || !myId || !players[myId]) return;
     if (startTime === null) return;
     if (elapsedTimeRef.current < 0) return;
@@ -163,7 +135,7 @@ export const Maze = ({ difficulty = "easy" }) => {
     if (e.key === "ArrowRight" && maze[x]?.[y + 1] !== 1) y++;
 
     const newPos = { x, y };
-    setPlayers((prev) => ({ ...prev, [myId]: { ...prev[myId], ...newPos } }));
+    setPlayers(prev => ({ ...prev, [myId]: { ...prev[myId], ...newPos } }));
     socket.emit("move", newPos);
 
     if (x === finishX && y === finishY && players[myId]?.finishTime == null) {
@@ -178,7 +150,7 @@ export const Maze = ({ difficulty = "easy" }) => {
   }, [players, myId, mazeData, startTime]);
 
   useEffect(() => {
-    if (!imagesLoaded || !mazeData) return;
+    if (!mazeData) return;
     const { maze } = mazeData;
 
     const canvas = canvasRef.current;
@@ -191,16 +163,18 @@ export const Maze = ({ difficulty = "easy" }) => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    const isPath = (x, y) => maze[x]?.[y] !== undefined && maze[x][y] !== 1;
+
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         const tile = maze[i][j];
-        const img =
-          tile === 1
-            ? wallImgRef.current
-            : tile === 2
-            ? finishImgRef.current
-            : groundImgRef.current;
-        ctx.drawImage(img, j * size, i * size, size, size);
+        const x = j * size;
+        const y = i * size;
+
+        if (tile === 1) {
+          ctx.fillStyle = "blue";
+          ctx.fillRect(x, y, size, size);
+        }
       }
     }
 
@@ -233,7 +207,7 @@ export const Maze = ({ difficulty = "easy" }) => {
         ctx.stroke();
       });
     });
-  }, [players, imagesLoaded, mazeData]);
+  }, [players, mazeData]);
 
   if (!mazeData) return <div className="text-white">Ładowanie gry...</div>;
 
