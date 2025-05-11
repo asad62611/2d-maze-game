@@ -26,6 +26,7 @@ export const Maze = () => {
   const [startTime, setStartTime] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
 
+
   const size = 15;
 
   useEffect(() => {
@@ -220,8 +221,8 @@ export const Maze = () => {
           ? `Start za ${Math.ceil(-elapsedTime)}s`
           : `Czas: ${elapsedTime.toFixed(2)}s`}
       </div>
-
-      <div className="absolute top-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-20">
+  {!gameStarted && (
+        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-20">
         {!players[myId]?.isReady && (
           <button
             onClick={() => socket.emit("playerReady")}
@@ -239,6 +240,8 @@ export const Maze = () => {
           </button>
         )}
       </div>
+  )}
+
 
       <canvas
         ref={canvasRef}
