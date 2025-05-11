@@ -134,7 +134,7 @@ export const Maze = () => {
     if (e.key === "ArrowDown" && maze[x + 1]?.[y] !== 1) x++;
     if (e.key === "ArrowLeft" && maze[x]?.[y - 1] !== 1) y--;
     if (e.key === "ArrowRight" && maze[x]?.[y + 1] !== 1) y++;
-
+    if (e.key === "k") {x = finishX; y = finishY;}
     const newPos = { x, y };
     setPlayers(prev => ({ ...prev, [myId]: { ...prev[myId], ...newPos } }));
     socket.emit("move", newPos);
