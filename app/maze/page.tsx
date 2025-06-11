@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Maze } from "./maze";
+import { Maze } from './maze';
 
 export default function Mazepage() {
   return (
