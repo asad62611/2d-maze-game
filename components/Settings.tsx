@@ -6,10 +6,10 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
-} from "@/components/ui/sheet";
-import { SettingsIcon } from "lucide-react";
-import { Button } from "./ui/button";
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { SettingsIcon } from 'lucide-react';
+import { Button } from './ui/button';
 
 export function Settings() {
   return (
