@@ -183,17 +183,64 @@ export const Maze = () => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const isPath = (x, y) => maze[x]?.[y] !== undefined && maze[x][y] !== 1;
+    const isWall = (x, y) => maze[x]?.[y] === 1;
+    const isPath = (x, y) => maze[x]?.[y] === 0;
+    const radius = size / 3;
+
+    ctx.fillStyle = 'blue';
 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
-        const tile = maze[i][j];
-        const x = j * size;
-        const y = i * size;
+        if (isWall(i, j)) {
+          const x = j * size;
+          const y = i * size;
 
-        if (tile === 1) {
-          ctx.fillStyle = 'blue';
-          ctx.fillRect(x, y, size, size);
+          const hasTopLeftL =
+            isPath(i - 1, j) && isPath(i, j - 1) && isPath(i - 1, j - 1);
+          const hasTopRightL =
+            isPath(i - 1, j) && isPath(i, j + 1) && isPath(i - 1, j + 1);
+          const hasBottomLeftL =
+            isPath(i + 1, j) && isPath(i, j - 1) && isPath(i + 1, j - 1);
+          const hasBottomRightL =
+            isPath(i + 1, j) && isPath(i, j + 1) && isPath(i + 1, j + 1);
+
+          ctx.beginPath();
+
+          if (hasTopLeftL) {
+            ctx.moveTo(x + radius, y);
+          } else {
+            ctx.moveTo(x, y);
+          }
+
+          if (hasTopRightL) {
+            ctx.lineTo(x + size - radius, y);
+            ctx.arcTo(x + size, y, x + size, y + radius, radius);
+          } else {
+            ctx.lineTo(x + size, y);
+          }
+
+          if (hasBottomRightL) {
+            ctx.lineTo(x + size, y + size - radius);
+            ctx.arcTo(x + size, y + size, x + size - radius, y + size, radius);
+          } else {
+            ctx.lineTo(x + size, y + size);
+          }
+
+          if (hasBottomLeftL) {
+            ctx.lineTo(x + radius, y + size);
+            ctx.arcTo(x, y + size, x, y + size - radius, radius);
+          } else {
+            ctx.lineTo(x, y + size);
+          }
+
+          if (hasTopLeftL) {
+            ctx.lineTo(x, y + radius);
+            ctx.arcTo(x, y, x + radius, y, radius);
+          } else {
+            ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.fill();
         }
       }
     }
