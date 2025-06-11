@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import { ReturnButton } from "@/components/ReturnButton";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { ReturnButton } from '@/components/ReturnButton';
+import { useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
 
 const useSocket = () => {
   const socketRef = useRef(null);
@@ -15,7 +14,6 @@ const useSocket = () => {
 
 export const Maze = () => {
   const socket = useSocket();
-  const router = useRouter();
   const canvasRef = useRef(null);
   const elapsedTimeRef = useRef(0);
 
@@ -25,24 +23,26 @@ export const Maze = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
-
+  const [countdownNumber, setCountdownNumber] = useState(null);
+  const [countdownOpacity, setCountdownOpacity] = useState(0);
+  const [shouldShowMaze, setShouldShowMaze] = useState(false);
 
   const size = 15;
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const playerName =
-      params.get("name") || `Player${Math.floor(Math.random() * 1000)}`;
-    const roomId = params.get("room") || "default";
-    const difficulty = params.get("difficulty") || "easy";
+      params.get('name') || `Player${Math.floor(Math.random() * 1000)}`;
+    const roomId = params.get('room') || 'default';
+    const difficulty = params.get('difficulty') || 'easy';
 
-    socket.emit("joinRoom", { roomId, name: playerName, difficulty });
+    socket.emit('joinRoom', { roomId, name: playerName, difficulty });
   }, []);
 
   useEffect(() => {
     socket.on(
-      "init",
+      'init',
       ({ id, players, maze, startX, startY, finishX, finishY }) => {
         setMyId(id);
         setPlayers(players);
@@ -50,16 +50,16 @@ export const Maze = () => {
       }
     );
 
-    socket.on("newPlayer", ({ id, pos }) => {
-      setPlayers(prev => ({ ...prev, [id]: pos }));
+    socket.on('newPlayer', ({ id, pos }) => {
+      setPlayers((prev) => ({ ...prev, [id]: pos }));
     });
 
-    socket.on("update", ({ id, pos }) => {
-      setPlayers(prev => ({ ...prev, [id]: pos }));
+    socket.on('update', ({ id, pos }) => {
+      setPlayers((prev) => ({ ...prev, [id]: pos }));
     });
 
-    socket.on("removePlayer", id => {
-      setPlayers(prev => {
+    socket.on('removePlayer', (id) => {
+      setPlayers((prev) => {
         const copy = { ...prev };
         delete copy[id];
         return copy;
@@ -67,20 +67,21 @@ export const Maze = () => {
     });
 
     return () => {
-      socket.off("init");
-      socket.off("newPlayer");
-      socket.off("update");
-      socket.off("removePlayer");
+      socket.off('init');
+      socket.off('newPlayer');
+      socket.off('update');
+      socket.off('removePlayer');
     };
   }, []);
 
   useEffect(() => {
-    socket.on("startGame", ({ serverStart }) => {
+    socket.on('startGame', ({ serverStart }) => {
       setStartTime(serverStart);
       setGameStarted(true);
+      setShouldShowMaze(false);
     });
 
-    return () => socket.off("startGame");
+    return () => socket.off('startGame');
   }, []);
 
   useEffect(() => {
@@ -90,10 +91,23 @@ export const Maze = () => {
       const elapsed = (now - startTime) / 1000;
       setElapsedTime(elapsed);
       elapsedTimeRef.current = elapsed;
+
+      if (elapsed < 0) {
+        const countdown = Math.ceil(-elapsed);
+        if (countdown !== countdownNumber) {
+          setCountdownNumber(countdown);
+          setCountdownOpacity(1);
+          setTimeout(() => {
+            setCountdownOpacity(0);
+          }, 500);
+        }
+      } else if (elapsed >= 0 && !shouldShowMaze) {
+        setShouldShowMaze(true);
+      }
     }, 10);
 
     const syncIntervalId = setInterval(() => {
-      socket.emit("getServerTime", ({ now }) => {
+      socket.emit('getServerTime', ({ now }) => {
         const correctedElapsed = (now - startTime) / 1000;
         setElapsedTime(correctedElapsed);
       });
@@ -103,18 +117,18 @@ export const Maze = () => {
       clearInterval(intervalId);
       clearInterval(syncIntervalId);
     };
-  }, [startTime]);
+  }, [startTime, countdownNumber, shouldShowMaze]);
 
   useEffect(() => {
     if (!gameStarted || !startTime) return;
     if (Object.values(players).length === 0) return;
 
     const allFinished = Object.values(players).every(
-      player => player.finishTime != null
+      (player) => player.finishTime != null
     );
 
     if (allFinished) {
-      socket.emit("getServerTime", ({ now }) => {
+      socket.emit('getServerTime', ({ now }) => {
         const syncedElapsed = (now - startTime) / 1000;
         setElapsedTime(syncedElapsed);
         elapsedTimeRef.current = syncedElapsed;
@@ -123,31 +137,34 @@ export const Maze = () => {
     }
   }, [players, gameStarted, startTime]);
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     if (!mazeData || !myId || !players[myId]) return;
     if (startTime === null) return;
     if (elapsedTimeRef.current < 0) return;
 
     const { maze, finishX, finishY } = mazeData;
     let { x, y } = players[myId];
-    if (e.key === "ArrowUp" && maze[x - 1]?.[y] !== 1) x--;
-    if (e.key === "ArrowDown" && maze[x + 1]?.[y] !== 1) x++;
-    if (e.key === "ArrowLeft" && maze[x]?.[y - 1] !== 1) y--;
-    if (e.key === "ArrowRight" && maze[x]?.[y + 1] !== 1) y++;
-    if (e.key === "k") {x = finishX; y = finishY;}
+    if (e.key === 'ArrowUp' && maze[x - 1]?.[y] !== 1) x--;
+    if (e.key === 'ArrowDown' && maze[x + 1]?.[y] !== 1) x++;
+    if (e.key === 'ArrowLeft' && maze[x]?.[y - 1] !== 1) y--;
+    if (e.key === 'ArrowRight' && maze[x]?.[y + 1] !== 1) y++;
+    if (e.key === 'k') {
+      x = finishX;
+      y = finishY;
+    }
     const newPos = { x, y };
-    setPlayers(prev => ({ ...prev, [myId]: { ...prev[myId], ...newPos } }));
-    socket.emit("move", newPos);
+    setPlayers((prev) => ({ ...prev, [myId]: { ...prev[myId], ...newPos } }));
+    socket.emit('move', newPos);
 
     if (x === finishX && y === finishY && players[myId]?.finishTime == null) {
       const finishedAt = elapsedTimeRef.current;
-      socket.emit("playerFinished", { time: finishedAt });
+      socket.emit('playerFinished', { time: finishedAt });
     }
   };
 
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [players, myId, mazeData, startTime]);
 
   useEffect(() => {
@@ -155,7 +172,9 @@ export const Maze = () => {
     const { maze } = mazeData;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
 
     const rows = maze.length;
     const cols = maze[0].length;
@@ -173,7 +192,7 @@ export const Maze = () => {
         const y = i * size;
 
         if (tile === 1) {
-          ctx.fillStyle = "blue";
+          ctx.fillStyle = 'blue';
           ctx.fillRect(x, y, size, size);
         }
       }
@@ -188,7 +207,7 @@ export const Maze = () => {
     });
 
     Object.entries(positionMap).forEach(([key, ids]) => {
-      const [x, y] = key.split(",").map(Number);
+      const [x, y] = key.split(',').map(Number);
       ids.forEach((id, index) => {
         const player = players[id];
         if (!player) return;
@@ -201,14 +220,14 @@ export const Maze = () => {
           0,
           2 * Math.PI
         );
-        ctx.fillStyle = player.color || "gray";
+        ctx.fillStyle = player.color || 'gray';
         ctx.fill();
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = 'black';
         ctx.stroke();
       });
     });
-  }, [players, mazeData]);
+  }, [players, mazeData, gameStarted, elapsedTime]);
 
   if (!mazeData) return <div className="text-white">Ładowanie gry...</div>;
 
@@ -216,39 +235,55 @@ export const Maze = () => {
     <div className="relative w-dvw h-dvh text-white overflow-hidden">
       <ReturnButton socket={socket} />
 
-      <div className="absolute top-10 left-1/2 transform -translate-x-1/2 text-2xl z-20">
+      <div className="absolute top-10 left-1/2 transform -translate-x-1/2 text-2xl z-50">
         {elapsedTime < 0
           ? `Start za ${Math.ceil(-elapsedTime)}s`
           : `Czas: ${elapsedTime.toFixed(2)}s`}
       </div>
-  {!gameStarted && (
-        <div className="absolute top-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-20">
-        {!players[myId]?.isReady && (
-          <button
-            onClick={() => socket.emit("playerReady")}
-            className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded text-white font-semibold"
-          >
-            ✔️ Ready
-          </button>
-        )}
-        {players[myId]?.isOwner && !gameStarted && (
-          <button
-            onClick={() => socket.emit("startGameByOwner")}
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded text-white font-semibold"
-          >
-            🕹 Start Game
-          </button>
+
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
+        {!gameStarted && (
+          <div className="flex flex-col items-center gap-4 pointer-events-auto">
+            {!players[myId]?.isReady && (
+              <button
+                onClick={() => socket.emit('playerReady')}
+                className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded text-white font-semibold"
+              >
+                ✔️ Ready
+              </button>
+            )}
+            {players[myId]?.isOwner && !gameStarted && (
+              <button
+                onClick={() => socket.emit('startGameByOwner')}
+                className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded text-white font-semibold"
+              >
+                🕹 Start Game
+              </button>
+            )}
+          </div>
         )}
       </div>
-  )}
 
+      {countdownNumber && (
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
+          style={{
+            opacity: countdownOpacity,
+            transition: 'opacity 0.5s ease-in-out',
+          }}
+        >
+          <div className="text-8xl font-bold text-white">{countdownNumber}</div>
+        </div>
+      )}
 
-      <canvas
-        ref={canvasRef}
-        className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white z-0"
-      />
+      {shouldShowMaze && (
+        <canvas
+          ref={canvasRef}
+          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white z-0"
+        />
+      )}
 
-      <div className="absolute right-10 top-20 bg-black bg-opacity-40 p-4 rounded-lg text-sm z-20">
+      <div className="absolute right-10 top-20 bg-black bg-opacity-40 p-4 rounded-lg text-sm z-50">
         <h2 className="font-bold mb-2">Gracze</h2>
         <ul className="space-y-1">
           {Object.entries(players)
@@ -263,15 +298,15 @@ export const Maze = () => {
             .map(([id, { nick, color, isOwner, finishTime }]) => (
               <li key={id} className="flex items-center justify-between gap-4">
                 <span className="flex items-center gap-2 min-w-[140px]">
-                  {players[id]?.isReady ? "✅" : "❌"}
+                  {players[id]?.isReady ? '✅' : '❌'}
                   <span className="inline-block w-4 text-center">
-                    {isOwner ? "👑" : ""}
+                    {isOwner ? '👑' : ''}
                   </span>
                   <div
                     className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: color || "gray" }}
+                    style={{ backgroundColor: color || 'gray' }}
                   ></div>
-                  {nick || "Anonim"}
+                  {nick || 'Anonim'}
                   {id === myId && (
                     <span className="text-xs text-gray-400 ml-1">(ty)</span>
                   )}
