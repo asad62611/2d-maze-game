@@ -14,7 +14,7 @@ export default function Mazepage() {
   return (
     <main>
       <ReturnButton />
-      <Maze difficulty={difficulty ?? "easy"} />
+      <Maze />
     </main>
   );
 }

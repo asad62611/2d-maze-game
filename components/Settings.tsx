@@ -13,9 +13,10 @@ import {
 import { Button } from "./ui/button";
 import { SettingsIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import type { Socket } from "socket.io";
 
 interface SettingsProps {
-  socket: any;
+  socket: Socket | null;
   isOwner: boolean;
   playerColor?: string;
 }
@@ -62,13 +63,27 @@ export function Settings({ socket, isOwner, playerColor: initialColor }: Setting
       setFinishThreshold(String(settings.finishThreshold));
     });
 
-    socket.on("movementUpdated", (movement: string) => {
+    const handleMovementUpdated = (movement: string) => {
       setMovement(movement);
-    });
+    };
+
+    socket.on("movementUpdated", handleMovementUpdated);
 
     return () => {
-      socket.off("settingsUpdated");
-      socket.off("movementUpdated");
+      socket.off("settingsUpdated", (settings: Settings) => {
+        if (settings.difficulty) setDifficulty(settings.difficulty);
+        if (settings.restartDelay != null) setRestartDelay(settings.restartDelay);
+        if (settings.maxPlayers != null) setMaxPlayers(settings.maxPlayers);
+        if (settings.maxRoundTime != null) setMaxRoundTime(settings.maxRoundTime);
+        if (settings.chatEnabled != null) setChatEnabled(settings.chatEnabled);
+        if (settings.autoRestart != null) setAutoRestart(settings.autoRestart);
+        if (settings.scoringType) setScoringType(settings.scoringType);
+        if (settings.autoStartThreshold != null)
+          setAutoStartThreshold(String(settings.autoStartThreshold));
+        if (settings.finishThreshold != null)
+          setFinishThreshold(String(settings.finishThreshold));
+      });
+      socket.off("movementUpdated", handleMovementUpdated);
     };
   }, [socket]);
 

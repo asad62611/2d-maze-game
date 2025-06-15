@@ -1,19 +1,28 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import type { Socket } from "socket.io";
 
-export const Chat = ({ socket, myId, players, chatEnabled, roomId }) => {
-  const [messages, setMessages] = useState([]);
+interface ChatProps {
+  socket: Socket;
+  myId: string;
+  players: Record<string, { nick: string }>;
+  chatEnabled: boolean;
+  roomId: string;
+}
+
+export const Chat = ({ socket, myId, players, chatEnabled, roomId }: ChatProps) => {
+  const [messages, setMessages] = useState<{ nick: string; message: string }[]>([]);
   const [input, setInput] = useState("");
-  const bottomRef = useRef(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
 useEffect(() => {
   if (!socket) return;
 
-  const handleMessage = (msg) => {
+  const handleMessage = (msg: { nick: string; message: string }) => {
     setMessages((prev) => [...prev, msg]);
   };
 
-  socket.off("chatMessage", handleMessage); // <- na wszelki wypadek
+  socket.off("chatMessage", handleMessage);
   socket.on("chatMessage", handleMessage);
   console.log("📡 Zarejestrowano chatMessage");
 
@@ -23,15 +32,12 @@ useEffect(() => {
   };
 }, [socket]);
 
-
-  // Przewijanie do dołu po nowej wiadomości
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
-  // Wysyłanie wiadomości
   const sendMessage = () => {
     if (!input.trim()) return;
 
