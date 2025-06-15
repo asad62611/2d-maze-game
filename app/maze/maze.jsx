@@ -55,7 +55,6 @@ useEffect(() => {
 
   useEffect(() => {
 socket.on("init", ({ id, players, maze, startX, startY, finishX, finishY, settings }) => {
-    console.log("🔧 Received settings from server:", settings); // 👈 LOG
   setMyId(id);
   setPlayers(players);
   setMazeData(maze ? { maze, startX, startY, finishX, finishY } : null);
@@ -63,10 +62,11 @@ socket.on("init", ({ id, players, maze, startX, startY, finishX, finishY, settin
   setRoomSettings(settings || {});
   setStartTime(null);
   setElapsedTime(0);
+  setPlayerColor(players[socket.id]?.color || "");
   elapsedTimeRef.current = 0;
   setRestartCountdown(null);
   setMaxRoundTime(settings?.maxRoundTime ?? 120);
-  setRestartDelay(settings?.restartDelay ?? 15); // <-- DODAJ TO
+  setRestartDelay(settings?.restartDelay ?? 15);
   
 });
 
@@ -228,7 +228,6 @@ if (allFinished && restartCountdown == null) {
   };
   useEffect(() => {
   socket.on("settingsUpdated", (settings) => {
-    console.log("📡 settingsUpdated received:", settings); // 👈 LOG
     setRoomSettings(settings || {});
     if (settings.maxRoundTime != null) {
   setMaxRoundTime(settings.maxRoundTime);
@@ -361,7 +360,7 @@ if (allFinished && restartCountdown == null) {
   return (
     <div className="relative w-dvw h-dvh text-white overflow-hidden">
       <ReturnButton socket={socket} />
-      <Settings socket={socket} isOwner={players[myId]?.isOwner} />
+      <Settings socket={socket} isOwner={players[myId]?.isOwner} playerColor={players[myId]?.color}/>
 <div className="bg-[#132a13] p-4 rounded-lg shadow-2xl absolute top-10 left-1/2 transform -translate-x-1/2 text-2xl z-50">
         {elapsedTime < 0
           ? `Start za ${Math.ceil(-elapsedTime)}s`

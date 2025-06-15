@@ -169,7 +169,6 @@ socket.emit("init", {
       if (socket.id !== room.ownerId) return;
 
       room.settings = { ...room.settings, ...newSettings };
-        console.log("⚙️ Settings updated:", room.settings); // 👈 DODAJ TO
       io.to(roomId).emit("settingsUpdated", room.settings);
     });
 
@@ -184,14 +183,31 @@ socket.emit("init", {
       }
     });
 
+    socket.on("changeColor", (newColor) => {
+      const room = rooms[socket.roomId];
+      if (!room || !room.players[socket.id]) return;
+    
+      const usedColors = Object.values(room.players)
+        .filter(p => p.color && p.color !== room.players[socket.id].color)
+        .map(p => p.color.toLowerCase());
+    
+      if (usedColors.includes(newColor.toLowerCase())) return;
+    
+      room.players[socket.id].color = newColor;
+    
+      io.to(socket.roomId).emit("update", {
+        id: socket.id,
+        pos: room.players[socket.id],
+      });
+    });
+    
+
 socket.on("chatMessage", ({ roomId, nick, message }) => {
   const resolvedRoomId = roomId || socket.roomId;
   const room = rooms[resolvedRoomId];
 
   if (!room || room.settings.chatEnabled === false) return;
 
-  // 🐞 Debug
-  console.log(`💬 [${resolvedRoomId}] ${nick}: ${message}`);
 
   io.to(resolvedRoomId).emit("chatMessage", {
     id: socket.id,

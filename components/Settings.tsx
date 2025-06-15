@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 import { SettingsIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function Settings({ socket, isOwner }) {
+export function Settings({ socket, isOwner, playerColor: initialColor}) {
   const [difficulty, setDifficulty] = useState("easy");
   const [restartDelay, setRestartDelay] = useState(15);
   const [maxPlayers, setMaxPlayers] = useState(8);
@@ -25,7 +25,7 @@ export function Settings({ socket, isOwner }) {
   const [autoStartThreshold, setAutoStartThreshold] = useState("75%");
   const [finishThreshold, setFinishThreshold] = useState("100%");
   const [movement, setMovement] = useState("arrows");
-  const [playerColor, setPlayerColor] = useState("");
+  const [playerColor, setPlayerColor] = useState(initialColor || "");
 
   useEffect(() => {
     if (!socket) return;
