@@ -368,7 +368,7 @@ if (allFinished && restartCountdown == null) {
           : `Czas: ${elapsedTime.toFixed(2)}s${restartCountdown != null ? ` (${restartCountdown}s left)` : ""}`}
       </div>
 
-      <div className="absolute top-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-20">
+      <div className="absolute top-30 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 z-20">
         {players[myId]?.isOwner && (
           <button
             onClick={() => socket.emit("newGame")}
