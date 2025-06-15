@@ -10,7 +10,7 @@ import { Chat } from "@/components/Chat";
 const useSocket = () => {
   const socketRef = useRef(null);
   if (!socketRef.current) {
-    socketRef.current = io(`http://${window.location.hostname}:3001`);
+    socketRef.current = io(`https://twod-maze-game.onrender.com`);
   }
   return socketRef.current;
 };
