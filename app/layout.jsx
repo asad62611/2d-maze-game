@@ -15,7 +15,6 @@ export default function RootLayout({ children }) {
       <body className="bg-black">
         <Background />
         <Instruction />
-        <Settings />
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </body>
     </html>

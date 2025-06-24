@@ -13,8 +13,15 @@ import {
 import { Button } from "./ui/button";
 import { SettingsIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import type { Socket } from "socket.io";
 
-export function Settings({ socket, isOwner, playerColor: initialColor}) {
+interface SettingsProps {
+  socket: Socket | null;
+  isOwner: boolean;
+  playerColor?: string;
+}
+
+export function Settings({ socket, isOwner, playerColor: initialColor }: SettingsProps) {
   const [difficulty, setDifficulty] = useState("easy");
   const [restartDelay, setRestartDelay] = useState(15);
   const [maxPlayers, setMaxPlayers] = useState(8);
@@ -30,7 +37,19 @@ export function Settings({ socket, isOwner, playerColor: initialColor}) {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("settingsUpdated", (settings) => {
+    interface Settings {
+      difficulty?: string;
+      restartDelay?: number;
+      maxPlayers?: number;
+      maxRoundTime?: number;
+      chatEnabled?: boolean;
+      autoRestart?: boolean;
+      scoringType?: string;
+      autoStartThreshold?: string | number;
+      finishThreshold?: string | number;
+    }
+
+    socket.on("settingsUpdated", (settings: Settings) => {
       if (settings.difficulty) setDifficulty(settings.difficulty);
       if (settings.restartDelay != null) setRestartDelay(settings.restartDelay);
       if (settings.maxPlayers != null) setMaxPlayers(settings.maxPlayers);
@@ -39,18 +58,32 @@ export function Settings({ socket, isOwner, playerColor: initialColor}) {
       if (settings.autoRestart != null) setAutoRestart(settings.autoRestart);
       if (settings.scoringType) setScoringType(settings.scoringType);
       if (settings.autoStartThreshold != null)
-        setAutoStartThreshold(settings.autoStartThreshold);
+      setAutoStartThreshold(String(settings.autoStartThreshold));
       if (settings.finishThreshold != null)
-        setFinishThreshold(settings.finishThreshold);
+      setFinishThreshold(String(settings.finishThreshold));
     });
 
-    socket.on("movementUpdated", (movement) => {
+    const handleMovementUpdated = (movement: string) => {
       setMovement(movement);
-    });
+    };
+
+    socket.on("movementUpdated", handleMovementUpdated);
 
     return () => {
-      socket.off("settingsUpdated");
-      socket.off("movementUpdated");
+      socket.off("settingsUpdated", (settings: Settings) => {
+        if (settings.difficulty) setDifficulty(settings.difficulty);
+        if (settings.restartDelay != null) setRestartDelay(settings.restartDelay);
+        if (settings.maxPlayers != null) setMaxPlayers(settings.maxPlayers);
+        if (settings.maxRoundTime != null) setMaxRoundTime(settings.maxRoundTime);
+        if (settings.chatEnabled != null) setChatEnabled(settings.chatEnabled);
+        if (settings.autoRestart != null) setAutoRestart(settings.autoRestart);
+        if (settings.scoringType) setScoringType(settings.scoringType);
+        if (settings.autoStartThreshold != null)
+          setAutoStartThreshold(String(settings.autoStartThreshold));
+        if (settings.finishThreshold != null)
+          setFinishThreshold(String(settings.finishThreshold));
+      });
+      socket.off("movementUpdated", handleMovementUpdated);
     };
   }, [socket]);
 
